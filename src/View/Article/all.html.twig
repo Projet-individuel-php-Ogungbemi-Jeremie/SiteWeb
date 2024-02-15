@@ -1,9 +1,0 @@
-{% extends "base.html.twig" %}
-{% block title %} ADMIN - {{ parent() }} - Liste des articles{% endblock %}
-{% block body %}
-<h1>Tous les articles</h1>
-   {{ dump(session) }}
-   {{ dump(tokenCSRF) }}
-    {% include "Article/_article_table.html.twig"  with articles %}
-
-{%  endblock %}

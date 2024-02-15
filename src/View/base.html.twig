@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}BLOG CESI{% endblock %}</title>
+    <title>{% block title %}Concerts France{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     {% block css %}{% endblock %}
@@ -18,24 +18,25 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">Accueil</a>
+                <a class="nav-link" href="/ProjetPersoPhp">Accueil</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Article/all">Admin All</a>
+                <a class="nav-link" href="/ProjetPersoPhp/Concert/all">Tous les conerts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Article/add">Admin Add</a>
+                <a class="nav-link" href="/ProjetPersoPhp/Concert/add">Ajouter un Concert</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Article/fixtures">Fixtures</a>
-            </li>
+            <!--<li class="nav-item">
+                <a class="nav-link" href="/Concert/fixtures">Fixtures</a>
+            </li>-->
         </ul>
     </div>
     <div>
         {% if session.login is defined %}
-            <a href="/User/logout" class="btn btn-danger">LOG OUT</a>
+            <a href="/ProjetPersoPhp/User/logout" class="btn btn-danger">Se deconnecter</a>
         {% else %}
-            <a href="/User/login" class="btn btn-success">LOG IN</a>
+            <a href="/ProjetPersoPhp/User/login" class="btn btn-success">Se connecter</a>
+            <a href="/ProjetPersoPhp/User/create" class="btn btn-primary">S'inscrire</a>
         {% endif %}
     </div>
 

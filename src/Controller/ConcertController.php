@@ -3,113 +3,101 @@ namespace src\Controller;
 
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
-use src\Model\Article;
+use src\Model\Concert;
 use src\Service\MailService;
 
-class ArticleController extends AbstractController {
+class ConcertController extends AbstractController {
 
-    public  function index(){
-        $articles = Article::SqlGetLast(20);
-        return $this->getTwig()->render('Article/index.html.twig',[
-            "articles" => $articles
+    public function index(){
+        $concerts = Concert::SqlGetAll();
+        return $this->getTwig()->render('Concert/index.html.twig',[
+            "concerts" => $concerts
         ]);
     }
 
     public function fixtures(): string{
-
-        Article::SqlFixtures();
+        Concert::SqlFixtures();
         return "<p>Fixtures ok </p>";
     }
 
     public function all(){
         $token = md5(random_bytes(32));
         $_SESSION["token"] = $token;
-        $articles = Article::SqlGetAll();
-        return $this->getTwig()->render('Article/all.html.twig',[
-            "articles" => $articles,
+        $concerts = Concert::SqlGetAll();
+        return $this->getTwig()->render('Concert/all.html.twig',[
+            "concerts" => $concerts,
             "tokenCSRF" => $token
         ]);
     }
 
     public function delete(){
-        UserController::protect(["Redacteur", "Administrateur", "Editeur"]);
+        UserController::protect();
         if(isset($_POST["id"])){
             if($_SESSION["token"] == $_POST["tokenCSRF"]){
-                Article::SqlDelete($_POST["id"]);
+                Concert::SqlDelete($_POST["id"]);
             }
         }
-        header("Location: /Article/all");
+        header("Location: /ProjetPersoPhp/Concert/all");
     }
 
     public function add(){
-        UserController::protect(["Redacteur", "Administrateur", "Editeur"]);
-        if(isset($_POST["Titre"]) && isset($_POST["Description"])){
+        UserController::protect();
+        if(isset($_POST["Nom"]) && isset($_POST["Description"])){
             $sqlRepository = null;
             $nomImage = null;
-
 
             if(!empty($_FILES["Image"]["name"])){
                 $tabExt = ["jpg", "jpeg", "gif", "png"]; // Extension autorisée
                 $extension = pathinfo($_FILES["Image"]["name"], PATHINFO_EXTENSION);
                 if(in_array(strtolower($extension), $tabExt)){
-                    //Fabriquer le répertoire d'auccil façon Wrodpress (YYYY/MM)
+                    //Fabriquer le répertoire d'accueil façon Wrodpress (YYYY/MM)
                     $dateNow = new \DateTime();
+                    $sqlRepository = $dateNow->format("Y/m");
                     $repository = "./uploads/images/{$dateNow->format("Y/m")}";
                     if(!is_dir($repository)) {
                         mkdir($repository, 0777, true);
                     }
-                    $sqlRepository = $dateNow->format("Y/m");
                     //Renommer le fichier image à la volée
                     $nomImage = md5(uniqid()).".".$extension;
-                    var_dump($repository);
-                    var_dump($nomImage);
-                    die();
                     //Upload du fichier
                     move_uploaded_file($_FILES["Image"]["tmp_name"], $repository."/".$nomImage);
                 }
             }
 
-           $article = new Article();
-            $article->setTitre($_POST["Titre"])
+            $concert = new Concert();
+            $concert->setNom($_POST["Nom"])
                 ->setDescription($_POST["Description"])
-                ->setDatePublication(new \DateTime($_POST["DatePublication"]))
-                ->setAuteur($_POST["Auteur"])
+                ->setDateConcert(new \DateTime($_POST["DateConcert"]))
+                ->setPrix($_POST["Prix"])
+                ->setLongitude($_POST["Longitude"])
+                ->setLatitude($_POST["Latitude"])
+                ->setPersonneAContacter($_POST["PersonneAContacter"])
                 ->setImageRepository($sqlRepository)
                 ->setImageFileName($nomImage);
-            $result = $article->SqlAdd();
+            $result = $concert->SqlAdd();
 
-            //Envoi du mail
-            $article->setId($result[2]);
-            $mail = new MailService();
-            $mail->send(
-                from: "admin@votresite.com",
-                to: "admin@votresite.com",
-                subject: "Un nouvel article a été posté",
-                bodyHtml: $this->getTwig()->render("Mail/article.add.html.twig",[
-                    "article" => $article
-                ])
-            );
 
-            header("Location: /Article/all");
+
+            header("Location: /ProjetPersoPhp/Concert/all");
         }
-        return $this->getTwig()->render("Article/add.html.twig");
+        return $this->getTwig()->render("Concert/add.html.twig");
     }
 
     public function show(int $id){
-        $article = Article::SqlGetById($id);
-        if($article==null){
-            header("Location: /Article/all");
+        $concert = Concert::SqlGetById($id);
+        if($concert==null){
+            header("Location: /ProjetPersoPhp/Concert/all");
         }
-        return $this->getTwig()->render("Article/show.html.twig", [
-            "article" => $article
+        return $this->getTwig()->render("Concert/show.html.twig", [
+            "concert" => $concert
         ]);
     }
 
     public function update(int $id){
-        $article = Article::SqlGetById($id);
-        if($article!=null){
-            if(isset($_POST["Titre"]) && isset($_POST["Description"]) && isset($_POST["DatePublication"]) && isset($_POST["Auteur"]) ) {
-                // Repris de la version "classic"
+        UserController::protect();
+        $concert = Concert::SqlGetById($id);
+        if($concert!=null){
+            if(isset($_POST["Nom"]) && isset($_POST["Description"]) && isset($_POST["DateConcert"]) && isset($_POST["Prix"]) && isset($_POST["Longitude"]) && isset($_POST["Latitude"]) && isset($_POST["PersonneAContacter"])) {
                 $sqlRepository = null;
                 $nomImage = null;
 
@@ -125,28 +113,28 @@ class ArticleController extends AbstractController {
                         if(!is_dir($repository)){
                             mkdir($repository,0777,true);
                         }
-                        // Renommage du fichier (d'où l'intéret d'avoir isolé l'extension
+                        // Renommage du fichier
                         $nomImage = md5(uniqid()) .'.'. $extension;
-
-                        //Upload du fichier, voilà c'est fini !
                         move_uploaded_file($_FILES['Image']['tmp_name'], $repository.'/'.$nomImage);
 
-                        // suppression ancienne image si existante
-                        if($_POST['imageAncienne'] != '' && $_POST['imageAncienne'] != '/' && file_exists("../../public/uploads/images/{$_POST["imageAncienne"]}")){
+                        // Suppression de l'ancienne image si existante
+                        if($_POST['imageAncienne'] != '' && $_POST['imageAncienne'] != '/' && file_exists("../ProjetPersoPhp/uploads/images/{$_POST["imageAncienne"]}")){
                             unlink("./uploads/images/{$_POST['imageAncienne']}");
                         }
                     }
                 }
 
-                //On réutilise l'objet Article créé au début de la méthode
-                $date = new \DateTime($_POST["DatePublication"]);
-                $article->setTitre($_POST["Titre"])
+                $date = new \DateTime($_POST["DateConcert"]);
+                $concert->setNom($_POST["Nom"])
                     ->setDescription($_POST["Description"])
-                    ->setDatePublication($date)
-                    ->setAuteur($_POST["Auteur"])
+                    ->setDateConcert($date)
+                    ->setPrix($_POST["Prix"])
+                    ->setLongitude($_POST["Longitude"])
+                    ->setLatitude($_POST["Latitude"])
+                    ->setPersonneAContacter($_POST["PersonneAContacter"])
                     ->setImageRepository($sqlRepository)
                     ->setImageFileName($nomImage);
-                $result = $article->SqlUpdate();
+                $result = $concert->SqlUpdate();
 
                 if($result[0]=="1"){
                     if($nomImage !=null){
@@ -154,29 +142,27 @@ class ArticleController extends AbstractController {
                     }
                 }
 
-                header("Location:/Article/update/{$id}");
+                header("Location: /ProjetPersoPhp/Concert/all");
             }else{
-                return $this->getTwig()->render('Article/update.html.twig',[
-                    "article"=>$article
+                return $this->getTwig()->render('Concert/update.html.twig',[
+                    "concert"=>$concert
                 ]);
             }
 
         }else{
-            header("Location:/Article/all");
+            header("Location:/ProjetPersoPhp/Concert/all");
 
         }
     }
 
     public function pdf(int $id){
-        $article = Article::SqlGetById($id);
+        $concert = Concert::SqlGetById($id);
         $mpdf = new Mpdf([
             "tempDir" => $_SERVER["DOCUMENT_ROOT"]."/../var/cache/pdf"
         ]);
-        $mpdf->WriteHTML($this->getTwig()->render("Article/pdf.html.twig", [
-            "article" => $article
+        $mpdf->WriteHTML($this->getTwig()->render("Concert/pdf.html.twig", [
+            "concert" => $concert
         ]));
-        $mpdf->Output(name: "Article.pdf",dest: Destination::DOWNLOAD);
+        $mpdf->Output(name: "Concert.pdf",dest: Destination::DOWNLOAD);
     }
-
-
 }
