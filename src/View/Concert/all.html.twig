@@ -1,0 +1,7 @@
+{% extends "base.html.twig" %}
+{% block title %} ADMIN - {{ parent() }} - Liste des Concerts{% endblock %}
+{% block body %}
+    <h1>Tous les concerts</h1>
+    {% include "Concert/_concert_table.html.twig"  with concerts %}
+
+{%  endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+{% block title %} Concerts {{ concert.Nom}} - {{ parent() }}{% endblock %}
+{% block body %}
+    <h1>{{ concert.Nom }}</h1>
+    <p><strong>Date du concert : </strong>{{ concert.DateConcert|date("d/m/Y") }}</p>
+    <p><strong>Personne à contacter : </strong>{{ concert.PersonneAContacter }}</p>
+    <p><strong>Description : </strong>{{ concert.Description }}</p>
+    <p><strong>Longitude : </strong>{{ concert.Longitude }}</p>
+    <p><strong>Latitude : </strong>{{ concert.Latitude }}</p>
+
+
+    <p>
+        {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
+
+            <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
+
+        {% endif %}
+    </p>
+
+    <p>
+        <a href="/ProjetPersoPhp/Concert/pdf/{{ concert.id }}" class="btn btn-primary">Exporter en PDF</a>
+    </p>
+{%  endblock %}

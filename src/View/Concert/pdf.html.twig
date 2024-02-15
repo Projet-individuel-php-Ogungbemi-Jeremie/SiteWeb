@@ -1,0 +1,17 @@
+<h1>{{ concert.titre }}</h1>
+<p><strong>Nom :</strong>{{ concert.Nom }}</p>
+<p><strong>Date du concert:</strong>{{ concert.DateConcert|date("d/m/Y") }}</p>
+<p><strong>Description :</strong>{{ concert.Description }}</p>
+<p><strong>¨Personne à contacter :</strong>{{ concert.PersonneAContacter }}</p>
+<p><strong>Longitude : </strong>{{ concert.Longitude }}</p>
+<p><strong>Latitude : </strong>{{ concert.Latitude }}</p>
+
+
+
+<p>
+        {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
+
+                <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
+
+        {% endif %}
+</p>

@@ -1,7 +1,7 @@
 <?php
 namespace src\Controller;
 
-use src\Model\Article;
+use src\Model\Concert;
 use src\Service\JwtService;
 
 class ApiArticleController{
@@ -22,7 +22,7 @@ class ApiArticleController{
             return json_encode($result);
         }
 
-        $articles = Article::SqlGetAll();
+        $articles = Concert::SqlGetAll();
         return json_encode($articles);
     }
 
@@ -37,7 +37,7 @@ class ApiArticleController{
             return json_encode("Erreur il manque des données)");
         }
 
-        $article = new Article();
+        $article = new Concert();
         $article->setTitre($_POST["Titre"])
             ->setDescription($_POST["Description"])
             ->setDatePublication(new \DateTime($_POST["DatePublication"]))
@@ -64,7 +64,7 @@ class ApiArticleController{
 
 
 
-        $article = new Article();
+        $article = new Concert();
         $article->setTitre($data->Titre)
             ->setDescription($data->Description)
             ->setDatePublication(new \DateTime($data->DatePublication))

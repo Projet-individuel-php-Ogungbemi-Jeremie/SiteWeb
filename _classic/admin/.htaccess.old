@@ -1,4 +1,0 @@
-AuthType Basic
-AuthNAme "Espace Admin veuillez vous logger"
-AuthUserFile ../../var/www/html/.htpasswd
-require valid-user

@@ -1,0 +1,44 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Date du Concert</th>
+        <th scope="col">Personne à Contacter</th>
+        <th scope="col">Voir</th>
+        <th scope="col">Modifier</th>
+        <th scope="col">Supprimer</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for concert in concerts %}
+        <tr>
+            <td>{{ concert.Id }}</td>
+            <td>{{ concert.Nom }}</td>
+            <td>{{ concert.DateConcert|date("d/m/Y") }}</td>
+            <td>{{ concert.PersonneAcontacter }}</td>
+            <td>
+                <form method="post" action="/ProjetPersoPhp/Concert/show/{{ concert.id }}">
+                    <input type="hidden" name="tokenCSRF" value="{{ tokenCSRF }}">
+                    <button type="submit" class="btn btn-primary"> Voir</button>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="/ProjetPersoPhp/Concert/update/{{ concert.id }}">
+                    <input type="hidden" name="tokenCSRF" value="{{ tokenCSRF }}">
+                    <button type="submit" class="btn btn-primary"> Modifier</button>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="/ProjetPersoPhp/Concert/delete">
+                    <input type="hidden" name="id" value="{{ concert.id }}">
+                    <input type="hidden" name="tokenCSRF" value="{{ tokenCSRF }}">
+                    <button type="submit" class="btn btn-danger"> Supprimer</button>
+                </form>
+            </td>
+
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
