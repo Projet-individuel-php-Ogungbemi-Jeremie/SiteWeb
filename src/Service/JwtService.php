@@ -5,7 +5,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class JwtService{
-    public static String $secretKey = "cesiblog";
+    public static String $secretKey = "projetperso";
 
     public static function createToken(array $datas) : String {
         $issuedAt = new \DateTime(); //Date de publication
