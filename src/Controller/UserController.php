@@ -81,7 +81,6 @@ class UserController extends AbstractController {
 
         echo JwtService::createToken([
            "mail" => $user->getMail(),
-           "roles" => $user->getRoles(),
            "nomprenom" => $user->getNomPrenom()
         ]);
     }

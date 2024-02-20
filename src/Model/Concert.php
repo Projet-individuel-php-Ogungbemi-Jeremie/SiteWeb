@@ -15,6 +15,19 @@ class Concert implements \JsonSerializable
     private ?string $ImageRepository = null;
     private ?string $ImageFileName = null;
 
+    private ?string $ImageData = null;
+
+    public function getImageData(): ?string
+    {
+        return $this->ImageData;
+    }
+
+    public function setImageData(?string $ImageData): Concert
+    {
+        $this->ImageData = $ImageData;
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->Id;
@@ -141,7 +154,9 @@ class Concert implements \JsonSerializable
     {
         try {
             $bdd = BDD::getInstance();
-            $requete = $bdd->prepare("INSERT INTO concerts (Nom, Description, DateConcert, Prix, Longitude, Latitude, PersonneAcontacter, ImageRepository, ImageFileName) VALUES(:Nom, :Description, :DateConcert, :Prix, :Longitude, :Latitude, :PersonneAcontacter, :ImageRepository, :ImageFileName)");
+            $requete = $bdd->prepare("INSERT INTO concerts (Nom, Description, DateConcert, Prix, Longitude, Latitude, PersonneAcontacter, 
+                      ImageRepository, ImageFileName, ImageData) 
+                    VALUES(:Nom, :Description, :DateConcert, :Prix, :Longitude, :Latitude, :PersonneAcontacter, :ImageRepository, :ImageFileName, :ImageData)");
 
             $execute = $requete->execute([
                 "Nom" => $this->getNom(),
@@ -152,6 +167,7 @@ class Concert implements \JsonSerializable
                 "Latitude" => $this->getLatitude(),
                 "PersonneAcontacter" => $this->getPersonneAcontacter(),
                 "ImageRepository" => $this->getImageRepository(),
+                "ImageData" => $this->getImageData(), // Ajout de l'attribut "ImageData" dans le tableau associatif
                 "ImageFileName" => $this->getImageFileName(),
             ]);
             return [0, "Insertion OK", $bdd->lastInsertId()];
@@ -179,7 +195,10 @@ class Concert implements \JsonSerializable
                 ->setPrix($concertSQL["Prix"])
                 ->setLongitude($concertSQL["Longitude"])
                 ->setLatitude($concertSQL["Latitude"])
-                ->setPersonneAcontacter($concertSQL["PersonneAContacter"]);
+                ->setPersonneAcontacter($concertSQL["PersonneAContacter"])
+                ->setImageRepository($concertSQL["ImageRepository"])
+                //->setImageData($concertSQL["ImageData"])
+                ->setImageFileName($concertSQL["ImageFileName"]);
             $concertsObjet[] = $concert;
         }
         return $concertsObjet;
@@ -205,8 +224,9 @@ class Concert implements \JsonSerializable
                 ->setPrix($concertSql["Prix"])
                 ->setLongitude($concertSql["Longitude"])
                 ->setLatitude($concertSql["Latitude"])
-                ->setPersonneAcontacter($concertSql["PersonneAContacter"])
+                ->setPersonneAContacter($concertSql["PersonneAContacter"])
                 ->setImageRepository($concertSql["ImageRepository"])
+                ->setImageData($concertSql["ImageData"])
                 ->setImageFileName($concertSql["ImageFileName"]);
             return $concert;
         }
@@ -217,7 +237,8 @@ class Concert implements \JsonSerializable
     {
         try {
             $bdd = BDD::getInstance();
-            $requete = $bdd->prepare('UPDATE concerts SET Nom=:Nom, Description=:Description, DateConcert=:DateConcert, Prix=:Prix, Longitude=:Longitude, Latitude=:Latitude, PersonneAContacter=:PersonneAContacter, ImageRepository=:ImageRepository, ImageFileName=:ImageFileName WHERE Id=:Id');
+            $requete = $bdd->prepare('UPDATE concerts SET Nom=:Nom, Description=:Description, DateConcert=:DateConcert, Prix=:Prix, Longitude=:Longitude, Latitude=:Latitude, 
+                    PersonneAContacter=:PersonneAContacter, ImageRepository=:ImageRepository, ImageFileName=:ImageFileName, ImageData=:ImageData WHERE Id=:Id');
             $result = $requete->execute([
                 'Nom' => $this->getNom(),
                 'Description' => $this->getDescription(),
@@ -228,6 +249,7 @@ class Concert implements \JsonSerializable
                 'PersonneAContacter' => $this->getPersonneAContacter(),
                 'ImageRepository' => $this->getImageRepository(),
                 'ImageFileName' => $this->getImageFileName(),
+                'ImageData' => $this->getImageData(),
                 'Id' => $this->getId()
             ]);
             return [0, "[OK] Mise à jour"];
@@ -260,14 +282,6 @@ class Concert implements \JsonSerializable
         return $concertsObjet;
     }
 
-    //public static function SqlFixtures()
-    //{
-    //$bdd = BDD::getInstance();
-    //$requete = $bdd->prepare('TRUNCATE TABLE concerts');
-    //$requete->execute();
-    // Ajoutez vos données factices pour les concerts ici
-    //}
-
     public static function SqlDelete(int $id)
     {
         $bdd = BDD::getInstance();
@@ -287,8 +301,10 @@ class Concert implements \JsonSerializable
             'Prix' => $this->Prix,
             'Longitude' => $this->Longitude,
             'Latitude' => $this->Latitude,
-            'PersonneAcontacter' => $this->PersonneAcontacter,
+            'PersonneAContacter' => $this->PersonneAContacter,
+            'ImageRepository' => $this->ImageRepository,
             'ImageFileName' => $this->ImageFileName,
+            'ImageData' => $this->ImageData,
         ];
     }
 }

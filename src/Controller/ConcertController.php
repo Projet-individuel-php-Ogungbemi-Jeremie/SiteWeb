@@ -4,7 +4,7 @@ namespace src\Controller;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
 use src\Model\Concert;
-use src\Service\MailService;
+
 
 class ConcertController extends AbstractController {
 
@@ -13,11 +13,6 @@ class ConcertController extends AbstractController {
         return $this->getTwig()->render('Concert/index.html.twig',[
             "concerts" => $concerts
         ]);
-    }
-
-    public function fixtures(): string{
-        Concert::SqlFixtures();
-        return "<p>Fixtures ok </p>";
     }
 
     public function all(){
@@ -45,6 +40,7 @@ class ConcertController extends AbstractController {
         if(isset($_POST["Nom"]) && isset($_POST["Description"])){
             $sqlRepository = null;
             $nomImage = null;
+            $imageData = null;
 
             if(!empty($_FILES["Image"]["name"])){
                 $tabExt = ["jpg", "jpeg", "gif", "png"]; // Extension autorisée
@@ -73,7 +69,9 @@ class ConcertController extends AbstractController {
                 ->setLatitude($_POST["Latitude"])
                 ->setPersonneAContacter($_POST["PersonneAContacter"])
                 ->setImageRepository($sqlRepository)
-                ->setImageFileName($nomImage);
+                ->setImageFileName($nomImage)
+                ->setImageData($imageData);
+
             $result = $concert->SqlAdd();
 
 
@@ -151,7 +149,6 @@ class ConcertController extends AbstractController {
 
         }else{
             header("Location:/ProjetPersoPhp/Concert/all");
-
         }
     }
 
