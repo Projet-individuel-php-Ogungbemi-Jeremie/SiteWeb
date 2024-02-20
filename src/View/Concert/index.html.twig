@@ -1,8 +1,8 @@
 {% extends "base.html.twig" %}
 {% block title %} Accueil - {{ parent() }}{% endblock %}
 {% block body %}
-<h1>Accueil</h1>
+    <h1>Accueil</h1>
 
-    {% include "Article/_article_table.html.twig"  with articles %}
+    {% include "Concert/_concert_table.html.twig"  with concerts %}
 
 {%  endblock %}

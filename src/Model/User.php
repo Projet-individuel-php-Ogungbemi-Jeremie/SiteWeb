@@ -1,12 +1,13 @@
 <?php
 namespace src\Model;
 
+
 class User {
     private ?int $Id = null;
     private String $NomPrenom;
     private String $Mail;
     private String $Password;
-    private Array $Roles;
+
 
     public function getId(): ?int
     {
@@ -52,26 +53,15 @@ class User {
         return $this;
     }
 
-    public function getRoles(): array
-    {
-        return $this->Roles;
-    }
-
-    public function setRoles(array $Roles): User
-    {
-        $this->Roles = $Roles;
-        return $this;
-    }
 
     public static function SqlAdd(User $user) :array{
         $bdd = BDD::getInstance();
         try{
-            $req = $bdd->prepare("INSERT INTO users (NomPrenom, Email, Password, Roles) VALUES(:NomPrenom, :Email, :Password, :Roles)");
+            $req = $bdd->prepare("INSERT INTO users (NomPrenom, Email, Password) VALUES(:NomPrenom, :Email, :Password)");
             $req->execute([
                 "NomPrenom" => $user->getNomPrenom(),
                 "Email" => $user->getMail(),
                 "Password" => $user->getPassword(),
-                "Roles" => json_encode($user->getRoles()),
             ]);
 
             return [0,"Insertion OK", $bdd->lastInsertId()];
@@ -93,8 +83,7 @@ class User {
             $user ->setMail($userSql ["Email"])
                 ->setNomPrenom($userSql ["NomPrenom"])
                 ->setId($userSql ["Id"])
-                ->setPassword($userSql ["Password"])
-                ->setRoles(json_decode($userSql["Roles"]));
+                ->setPassword($userSql ["Password"]);
             return $user;
         }
         return null;

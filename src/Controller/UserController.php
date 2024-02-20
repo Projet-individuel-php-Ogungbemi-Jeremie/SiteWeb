@@ -7,16 +7,15 @@ use src\Service\JwtService;
 class UserController extends AbstractController {
 
     public function create(){
-        if(isset($_POST["nomprenom"]) && isset($_POST["mail"]) && isset($_POST["password"]) && isset($_POST["roles"])){
+        if(isset($_POST["nomprenom"]) && isset($_POST["mail"]) && isset($_POST["password"])){
             $user = new User();
             $hashpass = password_hash($_POST["password"], PASSWORD_BCRYPT, ["cost"=>12]);
             $user->setNomPrenom($_POST["nomprenom"])
                 ->setMail($_POST["mail"])
-                ->setPassword($hashpass)
-                ->setRoles($_POST["roles"]);
+                ->setPassword($hashpass);
             $result = User::SqlAdd($user);
 
-            header("location:/");
+            header("location:/ProjetPersoPhp/User/login");
         }
         return $this->getTwig()->render("User/create.html.twig");
     }
@@ -29,10 +28,9 @@ class UserController extends AbstractController {
                 if (password_verify($_POST["password"], $user->getPassword())) {
                     $_SESSION["login"] = [
                         "mail" => $user->getMail(),
-                        "nomprenom" => $user->getNomPrenom(),
-                        "roles" => $user->getRoles()
+                        "nomprenom" => $user->getNomPrenom()
                     ];
-                    header("location:/Article/all");
+                    header("location:/ProjetPersoPhp/Concert/all");
                 } else {
                     throw new \Exception("Erreur User/Password");
                 }
@@ -45,21 +43,9 @@ class UserController extends AbstractController {
 
     }
 
-    public static function protect(array $rolescompatibles){
-        if(!isset($_SESSION["login"]) || !isset($_SESSION["login"]["roles"] )){
+    public static function protect(){
+        if(!isset($_SESSION["login"])){
             throw new \Exception("Vous devez vous authentifier pour acceder à cette page");
-        }
-
-        //Comparaison Role par Role
-        $rolefound = false;
-        foreach($_SESSION["login"]["roles"] as $role){
-            if(in_array($role,$rolescompatibles )){
-                $rolefound = true;
-                break;
-            }
-        }
-        if(!$rolefound){
-            throw new \Exception("Vous n'avez pas les droits d'accéder à cette page");
         }
 
     }
@@ -68,7 +54,7 @@ class UserController extends AbstractController {
         if(isset($_SESSION["login"])){
             unset($_SESSION["login"]);
         }
-        header("location:/");
+        header("location:/ProjetPersoPhp");
     }
 
     public function loginJwt(){
@@ -95,7 +81,6 @@ class UserController extends AbstractController {
 
         echo JwtService::createToken([
            "mail" => $user->getMail(),
-           "roles" => $user->getRoles(),
            "nomprenom" => $user->getNomPrenom()
         ]);
     }
