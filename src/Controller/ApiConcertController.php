@@ -17,6 +17,16 @@ class ApiConcertController{
             return json_encode("Erreur de méthode (GET attendu)");
         }
 
+        $concerts = Concert::SqlGetAll();
+        return json_encode($concerts);
+    }
+
+    public function getAllWithToken(){
+        if($_SERVER["REQUEST_METHOD"] != "GET"){
+            header("HTTP/1.1 404 Not Found");
+            return json_encode("Erreur de méthode (GET attendu)");
+        }
+
         $result = JwtService::checkToken();
         if($result["code"] == 1){
             return json_encode($result);
