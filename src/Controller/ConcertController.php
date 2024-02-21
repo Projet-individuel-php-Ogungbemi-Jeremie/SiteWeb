@@ -29,6 +29,12 @@ class ConcertController extends AbstractController {
         UserController::protect();
         if(isset($_POST["id"])){
             if($_SESSION["token"] == $_POST["tokenCSRF"]){
+                // Supprimer l'image associée au concert
+                $concert = Concert::SqlGetById($_POST["id"]);
+                $repository = "./uploads/images/{$concert->getImageRepository()}";
+                if(file_exists('../ProjetPersoPhp'.'/'.$repository.'/'.$concert->getImageFileName())) {
+                    unlink($repository.'/'.$concert->getImageFileName());
+                }
                 Concert::SqlDelete($_POST["id"]);
             }
         }
