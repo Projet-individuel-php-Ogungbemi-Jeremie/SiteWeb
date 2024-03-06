@@ -6,8 +6,6 @@
 <p><strong>Longitude : </strong>{{ concert.Longitude }}</p>
 <p><strong>Latitude : </strong>{{ concert.Latitude }}</p>
 
-
-
 <p>
         {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
 
