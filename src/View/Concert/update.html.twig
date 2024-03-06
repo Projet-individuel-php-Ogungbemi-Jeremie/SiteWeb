@@ -41,11 +41,13 @@
         <div class="mb-3">
             <input type="file" class="custom-file-input" name="Image">
         </div>
-        {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
-            <div class="mb-3">
-                <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
-            </div>
-        {% endif %}
+        <div class="col-md-3">
+            {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
+                <div class="mb-3">
+                    <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
+                </div>
+            {% endif %}
+        </div>
         <input type="hidden" name="imageAncienne"  value="{{ concert.ImageRepository}}/{{ concert.ImageFileName}}">
 
         <button type="submit" class="btn btn-primary">Valider</button>
@@ -58,7 +60,7 @@
         <script>
             mapboxgl.accessToken = 'pk.eyJ1Ijoib2d1bmdqZXIiLCJhIjoiY2xza2o0MHptMDNsYzJtbmF3dHAzZWEwOSJ9.2yo9nCkZU9a9W3AswPXB5A'; // Remplacez par votre clé d'accès Mapbox
 
-            var map = new mapboxgl.Map({
+            const map = new mapboxgl.Map({
                 container: 'map', // Conteneur de la carte
                 style: 'mapbox://styles/mapbox/streets-v11', // Style de la carte
                 center: [2.35, 48.85], // Coordonnées du centre (Paris par défaut)
