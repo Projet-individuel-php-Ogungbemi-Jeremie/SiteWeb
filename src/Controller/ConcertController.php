@@ -74,6 +74,7 @@ class ConcertController extends AbstractController {
                 ->setLongitude($_POST["Longitude"])
                 ->setLatitude($_POST["Latitude"])
                 ->setPersonneAContacter($_POST["PersonneAContacter"])
+                ->setEmailAContacter($_POST["EmailAContacter"])
                 ->setImageRepository($sqlRepository)
                 ->setImageFileName($nomImage)
                 ->setImageData($imageData);
@@ -135,6 +136,7 @@ class ConcertController extends AbstractController {
                         ->setLongitude($_POST["Longitude"])
                         ->setLatitude($_POST["Latitude"])
                         ->setPersonneAContacter($_POST["PersonneAContacter"])
+                        ->setEmailAContacter($_POST["EmailAContacter"])
                         ->setImageRepository($sqlRepository)
                         ->setImageFileName($nomImage);
                     $result = $concert->SqlUpdate();
@@ -154,6 +156,7 @@ class ConcertController extends AbstractController {
                         ->setLongitude($_POST["Longitude"])
                         ->setLatitude($_POST["Latitude"])
                         ->setPersonneAContacter($_POST["PersonneAContacter"])
+                        ->setEmailAContacter($_POST["EmailAContacter"])
                         ->setImageRepository($sqlRepository)
                         ->setImageFileName($_POST["imageAncienne"]);
                     $result = $concert->SqlUpdate();

@@ -37,6 +37,9 @@
             <input type="text" class="form-control" placeholder="Nom de la personne à contacter" name="PersonneAContacter" value="{{ concert.PersonneAContacter }}">
         </div>
 
+        <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email à contacter" name="EmailAContacter" value="{{ concert.EmailAContacter }}">
+        </div>
 
         <div class="mb-3">
             <input type="file" class="custom-file-input" name="Image">
@@ -71,6 +74,11 @@
                 document.getElementById('latitude').value = e.lngLat.lat; // Met à jour la valeur du champ Latitude
                 document.getElementById('longitude').value = e.lngLat.lng; // Met à jour la valeur du champ Longitude
             });
+
+            // Ajoute un marqueur sur la carte
+            var marker = new mapboxgl.Marker()
+            .setLngLat([e.lngLat.lng, e.lngLat.lat])
+            .addTo(map);
         </script>
     {% endblock %}
 
