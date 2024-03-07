@@ -45,7 +45,7 @@ class UserController extends AbstractController {
 
     public static function protect(){
         if(!isset($_SESSION["login"])){
-            throw new \Exception("Vous devez vous authentifier pour acceder à cette page");
+            throw new \Exception("Vous devez être Admin !");
         }
 
     }
