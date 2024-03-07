@@ -23,19 +23,23 @@
         </div>
 
         <div class="mb-3">
-            <div id="map" style='width: 400px; height: 300px;'></div>
+            <div id="map" style='width: 1000px; height: 300px;'></div>
         </div>
 
         <div class="mb-3">
-            <input type="text" id="latitude" class="form-control" placeholder="Latitude" name="Latitude">
+            <input type="text" id="latitude" class="form-control" placeholder="Latitude" name="Latitude" value="">
         </div>
 
         <div class="mb-3">
-            <input type="text" id="longitude" class="form-control" placeholder="Longitude" name="Longitude">
+            <input type="text" id="longitude" class="form-control" placeholder="Longitude" name="Longitude" value="">
         </div>
 
         <div class="mb-3">
             <input type="text" class="form-control" placeholder="Nom de la personne à contacter" name="PersonneAContacter">
+        </div>
+
+        <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email à contacter" name="EmailAContacter">
         </div>
 
         <div class="mb-3">
@@ -46,24 +50,29 @@
     </form>
 
     {% block javascript %}
-        <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
-        <script>
-            mapboxgl.accessToken = 'pk.eyJ1Ijoib2d1bmdqZXIiLCJhIjoiY2xza2o0MHptMDNsYzJtbmF3dHAzZWEwOSJ9.2yo9nCkZU9a9W3AswPXB5A'; // Remplacez par votre clé d'accès Mapbox
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoib2d1bmdqZXIiLCJhIjoiY2xza2o0MHptMDNsYzJtbmF3dHAzZWEwOSJ9.2yo9nCkZU9a9W3AswPXB5A'; // Remplacez par votre clé d'accès Mapbox
 
-            const map = new mapboxgl.Map({
-                container: 'map', // Conteneur de la carte
-                style: 'mapbox://styles/mapbox/streets-v11', // Style de la carte
-                center: [2.35, 48.85], // Coordonnées du centre (Paris par défaut)
-                zoom: 12 // Niveau de zoom par défaut
-            });
+        const map = new mapboxgl.Map({
+        container: 'map', // Conteneur de la carte
+        style: 'mapbox://styles/mapbox/streets-v11', // Style de la carte
+        center: [2.35, 48.85], // Coordonnées du centre (Paris par défaut)
+        zoom: 12 // Niveau de zoom par défaut
+    });
 
-            map.on('click', function(e) {
-                document.getElementById('latitude').value = e.lngLat.lat; // Met à jour la valeur du champ Latitude
-                document.getElementById('longitude').value = e.lngLat.lng; // Met à jour la valeur du champ Longitude
-            });
-        </script>
+        map.on('click', function(e) {
+        // Met à jour la valeur du champ Latitude
+        document.getElementById('latitude').value = e.lngLat.lat;
+        // Met à jour la valeur du champ Longitude
+        document.getElementById('longitude').value = e.lngLat.lng;
+
+        // Crée un nouveau marqueur à l'emplacement du clic
+        new mapboxgl.Marker()
+        .setLngLat([e.lngLat.lng, e.lngLat.lat])
+        .addTo(map);
+    });
+    </script>
     {% endblock %}
-
-
 {% endblock %}
