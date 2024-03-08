@@ -74,6 +74,7 @@ class ConcertController extends AbstractController {
                 ->setLongitude($_POST["Longitude"])
                 ->setLatitude($_POST["Latitude"])
                 ->setPersonneAContacter($_POST["PersonneAContacter"])
+                ->setEmailAContacter($_POST["EmailAContacter"])
                 ->setImageRepository($sqlRepository)
                 ->setImageFileName($nomImage)
                 ->setImageData($imageData);
@@ -126,27 +127,43 @@ class ConcertController extends AbstractController {
                             unlink("./uploads/images/{$_POST['imageAncienne']}");
                         }
                     }
-                }
 
-                $date = new \DateTime($_POST["DateConcert"]);
-                $concert->setNom($_POST["Nom"])
-                    ->setDescription($_POST["Description"])
-                    ->setDateConcert($date)
-                    ->setPrix($_POST["Prix"])
-                    ->setLongitude($_POST["Longitude"])
-                    ->setLatitude($_POST["Latitude"])
-                    ->setPersonneAContacter($_POST["PersonneAContacter"])
-                    ->setImageRepository($sqlRepository)
-                    ->setImageFileName($nomImage);
-                $result = $concert->SqlUpdate();
+                    $date = new \DateTime($_POST["DateConcert"]);
+                    $concert->setNom($_POST["Nom"])
+                        ->setDescription($_POST["Description"])
+                        ->setDateConcert($date)
+                        ->setPrix($_POST["Prix"])
+                        ->setLongitude($_POST["Longitude"])
+                        ->setLatitude($_POST["Latitude"])
+                        ->setPersonneAContacter($_POST["PersonneAContacter"])
+                        ->setEmailAContacter($_POST["EmailAContacter"])
+                        ->setImageRepository($sqlRepository)
+                        ->setImageFileName($nomImage);
+                    $result = $concert->SqlUpdate();
 
-                if($result[0]=="1"){
-                    if($nomImage !=null){
-                        unlink($repository.'/'.$nomImage);
+                    if($result[0]=="1"){
+                        if($nomImage !=null){
+                            unlink($repository.'/'.$nomImage);
+                        }
                     }
+                    header("Location: /ProjetPersoPhp/Concert/all");
+                }else {
+                    $date = new \DateTime($_POST["DateConcert"]);
+                    $concert->setNom($_POST["Nom"])
+                        ->setDescription($_POST["Description"])
+                        ->setDateConcert($date)
+                        ->setPrix($_POST["Prix"])
+                        ->setLongitude($_POST["Longitude"])
+                        ->setLatitude($_POST["Latitude"])
+                        ->setPersonneAContacter($_POST["PersonneAContacter"])
+                        ->setEmailAContacter($_POST["EmailAContacter"])
+                        ->setImageRepository($sqlRepository)
+                        ->setImageFileName($_POST["imageAncienne"]);
+                    $result = $concert->SqlUpdate();
+
+                    header("Location: /ProjetPersoPhp/Concert/all");
                 }
 
-                header("Location: /ProjetPersoPhp/Concert/all");
             }else{
                 return $this->getTwig()->render('Concert/update.html.twig',[
                     "concert"=>$concert

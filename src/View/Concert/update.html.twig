@@ -37,15 +37,20 @@
             <input type="text" class="form-control" placeholder="Nom de la personne à contacter" name="PersonneAContacter" value="{{ concert.PersonneAContacter }}">
         </div>
 
+        <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email à contacter" name="EmailAContacter" value="{{ concert.EmailAContacter }}">
+        </div>
 
         <div class="mb-3">
             <input type="file" class="custom-file-input" name="Image">
         </div>
-        {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
-            <div class="mb-3">
-                <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
-            </div>
-        {% endif %}
+        <div class="col-md-3">
+            {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
+                <div class="mb-3">
+                    <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
+                </div>
+            {% endif %}
+        </div>
         <input type="hidden" name="imageAncienne"  value="{{ concert.ImageRepository}}/{{ concert.ImageFileName}}">
 
         <button type="submit" class="btn btn-primary">Valider</button>
@@ -58,7 +63,7 @@
         <script>
             mapboxgl.accessToken = 'pk.eyJ1Ijoib2d1bmdqZXIiLCJhIjoiY2xza2o0MHptMDNsYzJtbmF3dHAzZWEwOSJ9.2yo9nCkZU9a9W3AswPXB5A'; // Remplacez par votre clé d'accès Mapbox
 
-            var map = new mapboxgl.Map({
+            const map = new mapboxgl.Map({
                 container: 'map', // Conteneur de la carte
                 style: 'mapbox://styles/mapbox/streets-v11', // Style de la carte
                 center: [2.35, 48.85], // Coordonnées du centre (Paris par défaut)
@@ -69,6 +74,11 @@
                 document.getElementById('latitude').value = e.lngLat.lat; // Met à jour la valeur du champ Latitude
                 document.getElementById('longitude').value = e.lngLat.lng; // Met à jour la valeur du champ Longitude
             });
+
+            // Ajoute un marqueur sur la carte
+            var marker = new mapboxgl.Marker()
+            .setLngLat([e.lngLat.lng, e.lngLat.lat])
+            .addTo(map);
         </script>
     {% endblock %}
 

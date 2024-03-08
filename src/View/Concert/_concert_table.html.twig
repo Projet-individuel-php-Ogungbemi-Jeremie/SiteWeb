@@ -5,6 +5,7 @@
         <th scope="col">Nom</th>
         <th scope="col">Date du Concert</th>
         <th scope="col">Personne à Contacter</th>
+        <th scope="col">Email à Contacter</th>
         <th scope="col">Voir</th>
         <th scope="col">Modifier</th>
         <th scope="col">Supprimer</th>
@@ -17,6 +18,7 @@
             <td>{{ concert.Nom }}</td>
             <td>{{ concert.DateConcert|date("d/m/Y") }}</td>
             <td>{{ concert.PersonneAcontacter }}</td>
+            <td>{{ concert.EmailAContacter }}</td>
             <td>
                 <form method="post" action="/ProjetPersoPhp/Concert/show/{{ concert.id }}">
                     <input type="hidden" name="tokenCSRF" value="{{ tokenCSRF }}">

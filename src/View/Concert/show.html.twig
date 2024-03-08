@@ -1,23 +1,33 @@
 {% extends "base.html.twig" %}
 {% block title %} Concerts {{ concert.Nom}} - {{ parent() }}{% endblock %}
 {% block body %}
-    <h1>{{ concert.Nom }}</h1>
-    <p><strong>Date du concert : </strong>{{ concert.DateConcert|date("d/m/Y") }}</p>
-    <p><strong>Personne à contacter : </strong>{{ concert.PersonneAContacter }}</p>
-    <p><strong>Description : </strong>{{ concert.Description }}</p>
-    <p><strong>Longitude : </strong>{{ concert.Longitude }}</p>
-    <p><strong>Latitude : </strong>{{ concert.Latitude }}</p>
-
-
-    <p>
-        {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
-
-            <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="img-thumbnail"/>
-
-        {% endif %}
-    </p>
-
-    <p>
-        <a href="/ProjetPersoPhp/Concert/pdf/{{ concert.id }}" class="btn btn-primary">Exporter en PDF</a>
-    </p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">{{ concert.Nom }}</h1>
+                        <p class="card-text"><strong>Date du concert : </strong>{{ concert.DateConcert|date("d/m/Y") }}</p>
+                        <p class="card-text"><strong>Personne à contacter : </strong>{{ concert.PersonneAContacter }}</p>
+                        <p class="card-text"><strong>Email à contacter : </strong>{{ concert.EmailAContacter }}</p>
+                        <p class="card-text"><strong>Description : </strong>{{ concert.Description }}</p>
+                        <p class="card-text"><strong>Longitude : </strong>{{ concert.Longitude }}</p>
+                        <p class="card-text"><strong>Latitude : </strong>{{ concert.Latitude }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                {% if file_exist( './uploads/images/'~concert.ImageRepository~'/'~concert.ImageFileName ) and concert.ImageFileName !="" %}
+                    <div class="card">
+                        <img src="/ProjetPersoPhp/uploads/images/{{ concert.ImageRepository }}/{{ concert.ImageFileName }}" class="card-img-top img-thumbnail" alt="Image du concert">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <a href="/ProjetPersoPhp/Concert/pdf/{{ concert.id }}" class="btn btn-primary">Exporter en PDF</a>
+            </div>
+        </div>
+    </div>
 {%  endblock %}

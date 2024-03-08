@@ -12,6 +12,8 @@ class Concert implements \JsonSerializable
     private ?float $Longitude = null;
     private ?float $Latitude = null;
     private ?string $PersonneAContacter = null;
+
+    private ?string $EmailAContacter = null;
     private ?string $ImageRepository = null;
     private ?string $ImageFileName = null;
 
@@ -116,6 +118,17 @@ class Concert implements \JsonSerializable
         return $this;
     }
 
+    public function getEmailAContacter(): ?string
+    {
+        return $this->EmailAContacter;
+    }
+
+    public function setEmailAContacter(?string $EmailAContacter): Concert
+    {
+        $this->EmailAContacter = $EmailAContacter;
+        return $this;
+    }
+
     public function getImageRepository(): ?string
     {
         return $this->ImageRepository;
@@ -138,13 +151,6 @@ class Concert implements \JsonSerializable
         return $this;
     }
 
-    public function premiersMots(int $n): string
-    {
-        preg_match('/^(\S+\s+){0,' . ($n - 1) . '}\S+/', $this->Description, $matches);
-        $resultat = $matches[0];
-        return $resultat;
-    }
-
     public function strlen()
     {
         return \strlen($this->Nom) + 1;
@@ -154,9 +160,9 @@ class Concert implements \JsonSerializable
     {
         try {
             $bdd = BDD::getInstance();
-            $requete = $bdd->prepare("INSERT INTO concerts (Nom, Description, DateConcert, Prix, Longitude, Latitude, PersonneAcontacter, 
+            $requete = $bdd->prepare("INSERT INTO concerts (Nom, Description, DateConcert, Prix, Longitude, Latitude, PersonneAcontacter,EmailAContacter, 
                       ImageRepository, ImageFileName, ImageData) 
-                    VALUES(:Nom, :Description, :DateConcert, :Prix, :Longitude, :Latitude, :PersonneAcontacter, :ImageRepository, :ImageFileName, :ImageData)");
+                    VALUES(:Nom, :Description, :DateConcert, :Prix, :Longitude, :Latitude, :PersonneAcontacter, :EmailAContacter, :ImageRepository, :ImageFileName, :ImageData)");
 
             $execute = $requete->execute([
                 "Nom" => $this->getNom(),
@@ -166,11 +172,12 @@ class Concert implements \JsonSerializable
                 "Longitude" => $this->getLongitude(),
                 "Latitude" => $this->getLatitude(),
                 "PersonneAcontacter" => $this->getPersonneAcontacter(),
+                "EmailAContacter" =>$this->getEmailAContacter(),
                 "ImageRepository" => $this->getImageRepository(),
                 "ImageData" => $this->getImageData(), // Ajout de l'attribut "ImageData" dans le tableau associatif
                 "ImageFileName" => $this->getImageFileName(),
             ]);
-            return [0, "Insertion OK", $bdd->lastInsertId()];
+            return [200, "Insertion OK", $bdd->lastInsertId()];
         } catch (\Exception $e) {
             return [1, $e->getMessage()];
         }
@@ -196,6 +203,7 @@ class Concert implements \JsonSerializable
                 ->setLongitude($concertSQL["Longitude"])
                 ->setLatitude($concertSQL["Latitude"])
                 ->setPersonneAcontacter($concertSQL["PersonneAContacter"])
+                ->setEmailAContacter($concertSQL["EmailAContacter"])
                 ->setImageRepository($concertSQL["ImageRepository"])
                 //->setImageData($concertSQL["ImageData"])
                 ->setImageFileName($concertSQL["ImageFileName"]);
@@ -203,9 +211,6 @@ class Concert implements \JsonSerializable
         }
         return $concertsObjet;
     }
-
-
-
 
     public static function SqlGetById(int $id): ?Concert
     {
@@ -225,6 +230,7 @@ class Concert implements \JsonSerializable
                 ->setLongitude($concertSql["Longitude"])
                 ->setLatitude($concertSql["Latitude"])
                 ->setPersonneAContacter($concertSql["PersonneAContacter"])
+                ->setEmailAContacter($concertSql["EmailAContacter"])
                 ->setImageRepository($concertSql["ImageRepository"])
                 ->setImageData($concertSql["ImageData"])
                 ->setImageFileName($concertSql["ImageFileName"]);
@@ -238,7 +244,7 @@ class Concert implements \JsonSerializable
         try {
             $bdd = BDD::getInstance();
             $requete = $bdd->prepare('UPDATE concerts SET Nom=:Nom, Description=:Description, DateConcert=:DateConcert, Prix=:Prix, Longitude=:Longitude, Latitude=:Latitude, 
-                    PersonneAContacter=:PersonneAContacter, ImageRepository=:ImageRepository, ImageFileName=:ImageFileName, ImageData=:ImageData WHERE Id=:Id');
+                    PersonneAContacter=:PersonneAContacter, EmailAContacter=:EmailAContacter, ImageRepository=:ImageRepository, ImageFileName=:ImageFileName, ImageData=:ImageData WHERE Id=:Id');
             $result = $requete->execute([
                 'Nom' => $this->getNom(),
                 'Description' => $this->getDescription(),
@@ -247,39 +253,16 @@ class Concert implements \JsonSerializable
                 'Longitude' => $this->getLongitude(),
                 'Latitude' => $this->getLatitude(),
                 'PersonneAContacter' => $this->getPersonneAContacter(),
+                'EmailAContacter'=>$this->getEmailAContacter(),
                 'ImageRepository' => $this->getImageRepository(),
                 'ImageFileName' => $this->getImageFileName(),
                 'ImageData' => $this->getImageData(),
                 'Id' => $this->getId()
             ]);
-            return [0, "[OK] Mise à jour"];
+            return [200, "[OK] Mise à jour"];
         } catch (\Exception $e) {
             return [1, "[ERREUR] " . $e->getMessage()];
         }
-    }
-
-    public static function SqlGetLast(int $nb): array
-    {
-        $bdd = BDD::getInstance();
-        $requete = $bdd->prepare('SELECT * FROM concerts ORDER BY Id DESC LIMIT :nb');
-        $requete->bindValue('nb', $nb, \PDO::PARAM_INT);
-        $requete->execute();
-        $concertsSQL = $requete->fetchAll(\PDO::FETCH_ASSOC);
-        $concertsObjet = [];
-        foreach ($concertsSQL as $concertSQL) {
-            $concert = new Concert();
-            $DateConcert = new \DateTime($concertSQL["DateConcert"]);
-            $concert->setNom($concertSQL["Nom"])
-                ->setId($concertSQL["Id"])
-                ->setDescription($concertSQL["Description"])
-                ->setDateConcert($DateConcert)
-                ->setPrix($concertSQL["Prix"])
-                ->setLongitude($concertSQL["Longitude"])
-                ->setLatitude($concertSQL["Latitude"])
-                ->setPersonneAContacter($concertSQL["PersonneAContacter"]);
-            $concertsObjet[] = $concert;
-        }
-        return $concertsObjet;
     }
 
     public static function SqlDelete(int $id)
@@ -302,6 +285,7 @@ class Concert implements \JsonSerializable
             'Longitude' => $this->Longitude,
             'Latitude' => $this->Latitude,
             'PersonneAContacter' => $this->PersonneAContacter,
+            'EmailAContacter'=>$this->EmailAContacter,
             'ImageRepository' => $this->ImageRepository,
             'ImageFileName' => $this->ImageFileName,
             'ImageData' => $this->ImageData,

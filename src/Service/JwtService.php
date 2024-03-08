@@ -5,15 +5,15 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class JwtService{
-    public static String $secretKey = "projetperso";
+    public static string $secretKey = "projetperso";
 
-    public static function createToken(array $datas) : String {
+    public static function createToken(array $datas) : string {
         $issuedAt = new \DateTime(); //Date de publication
         $expire = new \DateTime();
         $expire->modify('+6 minutes');
 
         $data = [
-          "iat" => $issuedAt->getTimestamp(), // Date création
+            "iat" => $issuedAt->getTimestamp(), // Date création
             "iss" => "cesi.local",
             "nbf" => $issuedAt->getTimestamp(), //Utilisable pas avant ...
             "exp" => $expire->getTimestamp(),
@@ -28,31 +28,34 @@ class JwtService{
 
     public static function checkToken() : array {
 
-        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+        if (!isset($_SERVER['HTTP_AUTHORIZATION']) || !preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
             $result = [
-                "code" => 1,
+                "code" => 401,
                 "body" => "Token non trouvé dans la requête"
             ];
+            header("HTTP/1.1 401 Unauthorized");
             return $result;
         }
 
         $jwt = $matches[1];
-        if (! $jwt) {
+        if (!$jwt) {
             $result = [
-                "code" => 1,
+                "code" => 401,
                 "body" => "Aucun jeton n'a pu être extrait de l'en-tête d'autorisation."
             ];
+            header("HTTP/1.1 401 Unauthorized");
             return $result;
         }
 
         try{
-            //ça remonte une exception dès qu'il trouve une erreur on on veut catch l'erreur pour la donner en JSON
+            //ça remonte une exception dès qu'il trouve une erreur on veut catch l'erreur pour la donner en JSON
             $token = JWT::decode($jwt, new Key(self::$secretKey, 'HS512'));
-        }catch (\Exception$e){
+        }catch (\Exception $e){
             $result = [
-                "code" => 1,
+                "code" => 401,
                 "body" => "Les données du jeton ne sont pas compatibles : {$e->getMessage()}"
             ];
+            header("HTTP/1.1 401 Unauthorized");
             return $result;
         }
 
@@ -64,14 +67,15 @@ class JwtService{
             $token->exp < $now->getTimestamp())
         {
             $result = [
-                "code" => 1,
+                "code" => 401,
                 "body" => "Les données du jeton ne sont pas compatibles"
             ];
+            header("HTTP/1.1 401 Unauthorized");
             return $result;
         }
 
         $result = [
-            "code" => 0,
+            "code" => 200,
             "body" => "Token OK"
         ];
         return $result;

@@ -13,23 +13,8 @@ class ApiConcertController{
     //GET ALL
     public function getAll(){
         if($_SERVER["REQUEST_METHOD"] != "GET"){
-                header("HTTP/1.1 404 Not Found");
+            header("HTTP/1.1 405 Method Not Allowed");
             return json_encode("Erreur de méthode (GET attendu)");
-        }
-
-        $concerts = Concert::SqlGetAll();
-        return json_encode($concerts);
-    }
-
-    public function getAllWithToken(){
-        if($_SERVER["REQUEST_METHOD"] != "GET"){
-            header("HTTP/1.1 404 Not Found");
-            return json_encode("Erreur de méthode (GET attendu)");
-        }
-
-        $result = JwtService::checkToken();
-        if($result["code"] == 1){
-            return json_encode($result);
         }
 
         $concerts = Concert::SqlGetAll();
@@ -38,14 +23,20 @@ class ApiConcertController{
 
     public function add(){
         if($_SERVER["REQUEST_METHOD"] != "POST"){
-            header("HTTP/1.1 404 Not Found");
+            header("HTTP/1.1 405 Method Not Allowed");
             return json_encode("Erreur de méthode (POST attendu)");
         }
 
+        $result = JwtService::checkToken();
+        if($result["code"] == 401){
+            return json_encode($result);
+        }
+
         if(!isset($_POST["Nom"]) || !isset($_POST["Description"])){
-            header("HTTP/1.1 404 Not Found");
+            header("HTTP/1.1 400 Bad Request");
             return json_encode("Erreur il manque des données)");
         }
+
 
         $sqlRepository = null;
         $nomImage = null;
@@ -80,6 +71,7 @@ class ApiConcertController{
             ->setLongitude($_POST["Longitude"])
             ->setLatitude($_POST["Latitude"])
             ->setPersonneAContacter($_POST["PersonneAContacter"])
+            ->setEmailAContacter($_POST["EmailAContacter"])
             ->setImageRepository($sqlRepository)
             ->setImageData($_POST["ImageData"])
             ->setImageFileName($nomImage);
@@ -88,11 +80,18 @@ class ApiConcertController{
         return json_encode($result);
     }
 
+
+
     public function update(int $id){
 
         if($_SERVER["REQUEST_METHOD"] != "POST"){
             header("HTTP/1.1 404 Not Found");
             return json_encode("Erreur de méthode (POST attendu)");
+        }
+
+        $result = JwtService::checkToken();
+        if($result["code"] == 401){
+            return json_encode($result);
         }
 
         $concert = Concert::SqlGetById($id);
@@ -137,13 +136,18 @@ class ApiConcertController{
                     ->setLongitude($_POST["Longitude"])
                     ->setLatitude($_POST["Latitude"])
                     ->setPersonneAContacter($_POST["PersonneAContacter"])
+                    ->setEmailAContacter($_POST["EmailAContacter"])
                     ->setImageRepository($sqlRepository)
                     ->setImageFileName($nomImage)
                     ->setImageData($_POST["ImageData"]);
                 $result = $concert->SqlUpdate();
                 return json_encode($result);
             }
+        }else {
+            header("HTTP/1.1 404 Not Found");
+            return json_encode("Concert non trouvé");
         }
+
     }
 
 
@@ -152,6 +156,12 @@ class ApiConcertController{
             header("HTTP/1.1 404 Not Found");
             return json_encode("Erreur de méthode (DELETE attendu)");
         }
+
+        $result = JwtService::checkToken();
+        if($result["code"] == 401){
+            return json_encode($result);
+        }
+
         $concert = Concert::SqlGetById($id);
         if(!$concert){
             header("HTTP/1.1 404 Not Found");
@@ -164,6 +174,7 @@ class ApiConcertController{
         }
 
         Concert::SqlDelete($id);
+        header("HTTP/1.1 200 OK");
         return json_encode("ok");
     }
 }
