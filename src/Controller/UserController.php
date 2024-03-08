@@ -61,12 +61,12 @@ class UserController extends AbstractController {
         header('Content-Type: application/json; charset=utf-8');
 
         if($_SERVER["REQUEST_METHOD"] != "POST"){
-            header("HTTP/1.1 404 Not Found");
+            header("HTTP/1.1 405 Method Not Allowed");
             return json_encode("Erreur de méthode (POST attendu)");
         }
 
         if(!isset($_POST["mail"]) || !isset($_POST["password"])){
-            header("HTTP/1.1 404 Not Found");
+            header("HTTP/1.1 405 Method Not Allowed");
             return json_encode("Erreur il manque des données)");
         }
 

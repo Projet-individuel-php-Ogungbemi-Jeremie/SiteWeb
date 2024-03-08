@@ -177,7 +177,7 @@ class Concert implements \JsonSerializable
                 "ImageData" => $this->getImageData(), // Ajout de l'attribut "ImageData" dans le tableau associatif
                 "ImageFileName" => $this->getImageFileName(),
             ]);
-            return [0, "Insertion OK", $bdd->lastInsertId()];
+            return [200, "Insertion OK", $bdd->lastInsertId()];
         } catch (\Exception $e) {
             return [1, $e->getMessage()];
         }
@@ -259,7 +259,7 @@ class Concert implements \JsonSerializable
                 'ImageData' => $this->getImageData(),
                 'Id' => $this->getId()
             ]);
-            return [0, "[OK] Mise à jour"];
+            return [200, "[OK] Mise à jour"];
         } catch (\Exception $e) {
             return [1, "[ERREUR] " . $e->getMessage()];
         }
